@@ -2,7 +2,7 @@ import './globals.css'
 import ClientLayout from './ClientLayout'
 
 export const metadata = {
-  title: 'Akuko Akowe',
+  title: 'Chronicle',
   description: 'Share your stories with the world',
   icons: {
     icon: [
