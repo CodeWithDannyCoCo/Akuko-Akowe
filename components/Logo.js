@@ -41,7 +41,7 @@ export default function Logo({ variant = 'full', className = '' }) {
             />
             <h1 className={`text-xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-gray-900'
                 } ${variant === 'icon' ? 'sm:hidden' : ''}`}>
-                Akúkò <span className="text-blue-600 dark:text-blue-400">Akòwé</span>
+                Chronicle <span className="text-blue-600 dark:text-blue-400">Blog</span>
             </h1>
         </div>
     )
