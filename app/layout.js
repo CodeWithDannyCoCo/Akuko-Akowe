@@ -1,35 +1,45 @@
-'use client'
-
 import './globals.css'
-import { ThemeProvider } from '../lib/ThemeContext'
-import { AuthProvider } from '../lib/AuthContext'
-import HealthCheck from '../components/HealthCheck'
+import ClientLayout from './ClientLayout'
+
+export const metadata = {
+  title: 'Akuko Akowe',
+  description: 'Share your stories with the world',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.ico',
+        sizes: 'any',
+      },
+      {
+        url: '/favicon-16x16.png',
+        sizes: '16x16',
+        type: 'image/png',
+      },
+      {
+        url: '/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+    ],
+    apple: {
+      url: '/apple-touch-icon.png',
+      sizes: '180x180',
+      type: 'image/png',
+    },
+    other: [
+      {
+        rel: 'manifest',
+        url: '/site.webmanifest',
+      },
+    ],
+  },
+}
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                let theme = localStorage.getItem('theme')
-                if (!theme) {
-                  theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-                }
-                document.documentElement.classList.add(theme)
-              } catch (e) {}
-            `
-          }}
-        />
-      </head>
-      <body className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-        <ThemeProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </ThemeProvider>
-        <HealthCheck />
+    <html lang="en">
+      <body>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   )
