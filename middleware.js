@@ -14,60 +14,45 @@ const authRoutes = [
 ];
 
 export async function middleware(request) {
-    // Get the pathname of the request
-    const path = request.nextUrl.pathname
-    console.log('Middleware: Processing path:', path);
+    const path = request.nextUrl.pathname;
+    const token = request.cookies.get('accessToken')?.value;
 
-    // Check if it's an admin route
-    if (path.startsWith('/admin')) {
-        console.log('Middleware: Checking admin route access');
-
-        // Get all cookies for debugging
-        const cookies = request.cookies.getAll();
-        console.log('Middleware: All cookies:', cookies);
-
-        const token = request.cookies.get('accessToken')?.value;
-        console.log('Middleware: Token found:', !!token);
-
+    // Handle protected routes
+    if (protectedRoutes.some(route => path.startsWith(route))) {
         if (!token) {
-            console.log('Middleware: No token found in cookies, redirecting to login');
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
+    }
+
+    // Handle auth routes (prevent authenticated users from accessing login/signup)
+    if (authRoutes.includes(path) && token) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // Handle admin routes
+    if (path.startsWith('/admin')) {
+        if (!token) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
         try {
-            // Use the environment variable for API URL
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-            console.log('Middleware: Using API URL:', apiUrl);
-
-            // Update the API endpoint to use the base URL without /api prefix
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
             const response = await fetch(`${apiUrl}/users/me/`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Cookie': `accessToken=${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                credentials: 'include',
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Middleware: Staff verification failed:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    error: errorText
-                });
-                throw new Error('Failed to verify staff status');
-            }
+            if (!response.ok) throw new Error('Failed to verify staff status');
 
             const user = await response.json();
-            console.log('Middleware: User data:', user);
-
             if (!user.is_staff) {
-                console.log('Middleware: User is not staff, redirecting to home');
                 return NextResponse.redirect(new URL('/', request.url));
             }
-
-            console.log('Middleware: Staff access granted');
         } catch (error) {
-            console.error('Middleware: Staff verification error:', error);
+            console.error('Staff verification error:', error);
             return NextResponse.redirect(new URL('/login', request.url));
         }
     }
@@ -76,5 +61,12 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*']
+    matcher: [
+        '/admin/:path*',
+        '/create-post',
+        '/settings',
+        '/profile/:path*',
+        '/login',
+        '/signup'
+    ]
 } 
