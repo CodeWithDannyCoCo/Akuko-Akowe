@@ -3,6 +3,7 @@
 import './globals.css'
 import { ThemeProvider } from '../lib/ThemeContext'
 import { AuthProvider } from '../lib/AuthContext'
+import HealthCheck from '../components/HealthCheck'
 
 export default function RootLayout({ children }) {
   return (
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
             {children}
           </AuthProvider>
         </ThemeProvider>
+        <HealthCheck />
       </body>
     </html>
   )

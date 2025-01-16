@@ -2,23 +2,24 @@
 const nextConfig = {
     images: {
         domains: [
-            'localhost',
-            '1dfe-102-88-53-239.ngrok-free.app'
+            'akuko-akowe-server.onrender.com'
+        ],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'akuko-akowe-server.onrender.com',
+                pathname: '/media/**',
+            }
         ],
     },
-    async headers() {
+    async rewrites() {
         return [
             {
-                // Allow CORS for API routes
-                source: '/api/:path*',
-                headers: [
-                    { key: 'Access-Control-Allow-Origin', value: '*' },
-                    { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-                    { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-                ],
-            },
-        ];
-    },
+                source: '/media/:path*',
+                destination: 'https://akuko-akowe-server.onrender.com/media/:path*',
+            }
+        ]
+    }
 }
 
 module.exports = nextConfig 
