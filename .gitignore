@@ -110,3 +110,7 @@ Thumbs.db
 .env.local
 .env.development
 .env.production
+
+# API Documentation
+API_DOCUMENTATION.md
+

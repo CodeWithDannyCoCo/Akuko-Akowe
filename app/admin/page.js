@@ -164,8 +164,8 @@ export default function AdminDashboard() {
                         <div key={activity.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <div className="flex items-start space-x-3">
                                 <div className={`p-2 rounded-full flex-shrink-0 ${activity.type === 'success'
-                                        ? 'bg-green-100 dark:bg-green-900/50 text-green-600'
-                                        : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600'
+                                    ? 'bg-green-100 dark:bg-green-900/50 text-green-600'
+                                    : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600'
                                     }`}>
                                     {activity.icon === 'Users' ? <Users className="w-4 h-4" /> :
                                         activity.icon === 'FileText' ? <FileText className="w-4 h-4" /> :
