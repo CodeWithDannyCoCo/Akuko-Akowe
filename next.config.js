@@ -2,12 +2,12 @@
 const nextConfig = {
     images: {
         domains: [
-            'akuko-akowe-server.onrender.com'
+            'chronicle-server-f2n9.onrender.com'
         ],
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'akuko-akowe-server.onrender.com',
+                hostname: 'chronicle-server-f2n9.onrender.com',
                 pathname: '/media/**',
             }
         ],
@@ -16,7 +16,7 @@ const nextConfig = {
         return [
             {
                 source: '/media/:path*',
-                destination: 'https://akuko-akowe-server.onrender.com/media/:path*',
+                destination: 'https://chronicle-server-f2n9.onrender.com/media/:path*',
             }
         ]
     }

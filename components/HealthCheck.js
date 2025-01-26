@@ -1,58 +1,66 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '@/lib/api'
 
 export default function HealthCheck() {
-    const [status, setStatus] = useState({ error: null, loading: true })
+    const [health, setHealth] = useState({ status: 'checking', message: 'Checking API status...' })
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         const checkHealth = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL
-                if (!apiUrl) {
-                    throw new Error('API URL is not configured')
-                }
-
-                const response = await fetch(`${apiUrl}/health/`, {
+                const response = await fetch(`${api.API_URL}/health/`, {
                     method: 'GET',
                     headers: {
+                        'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
                 })
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
+                    throw new Error(`API returned ${response.status}`)
                 }
 
                 const data = await response.json()
-                setStatus({ error: null, loading: false })
-                console.log('Health check successful:', data)
-            } catch (error) {
-                console.error('Health check failed:', error)
-                setStatus({
-                    error: `Connection failed: ${error.message}`,
-                    loading: false
-                })
+                setHealth(data)
+                setError(null)
+            } catch (err) {
+                setError(err.message)
+                setHealth({ status: 'unhealthy', message: 'API is not responding' })
             }
         }
 
         checkHealth()
+        // Set up polling every 30 seconds
         const interval = setInterval(checkHealth, 30000)
 
         return () => clearInterval(interval)
     }, [])
 
-    if (status.loading) return null
-
-    if (status.error) {
+    if (error) {
         return (
-            <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-                <p className="text-sm font-medium">Backend Connection Error</p>
-                <p className="text-xs mt-1">{status.error}</p>
-                <p className="text-xs mt-1">API URL: {process.env.NEXT_PUBLIC_API_URL}</p>
+            <div className="p-4 bg-red-100 text-red-700 rounded-md">
+                <p>Error: {error}</p>
             </div>
         )
     }
 
-    return null
+    return (
+        <div className={`p-4 rounded-md ${health.status === 'healthy'
+            ? 'bg-green-100 text-green-700'
+            : health.status === 'checking'
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-red-100 text-red-700'
+            }`}>
+            <p className="font-medium">Status: {health.status}</p>
+            <p>{health.message}</p>
+            {health.database && <p>Database: {health.database}</p>}
+            {health.timestamp && (
+                <p className="text-sm mt-2">
+                    Last checked: {new Date(health.timestamp).toLocaleString()}
+                </p>
+            )}
+        </div>
+    )
 } 
