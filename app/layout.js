@@ -2,6 +2,7 @@ import './globals.css'
 import ClientLayout from './ClientLayout'
 import HealthCheck from '../components/HealthCheck'
 import { NotificationProvider } from '../lib/NotificationContext'
+import { AuthProvider } from '../lib/AuthContext'
 
 export const metadata = {
   title: 'Chronicle',
@@ -41,12 +42,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <NotificationProvider>
-          <ClientLayout>{children}</ClientLayout>
-          <div className="fixed bottom-4 left-4 z-50">
-            <HealthCheck />
-          </div>
-        </NotificationProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <ClientLayout>{children}</ClientLayout>
+            <div className="fixed bottom-4 left-4 z-50">
+              <HealthCheck />
+            </div>
+          </NotificationProvider>
+        </AuthProvider>
       </body>
     </html>
   )
