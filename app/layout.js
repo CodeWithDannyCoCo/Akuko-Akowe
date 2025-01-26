@@ -45,9 +45,11 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <NotificationProvider>
             <ClientLayout>{children}</ClientLayout>
+            {/* Temporarily disabled HealthCheck
             <div className="fixed bottom-4 left-4 z-50">
               <HealthCheck />
             </div>
+            */}
           </NotificationProvider>
         </AuthProvider>
       </body>
