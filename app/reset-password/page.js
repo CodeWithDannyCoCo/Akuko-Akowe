@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { dynamic } from 'next/dynamic';
+import dynamic from 'next/dynamic';
 
 // ResetPasswordContent component that uses useSearchParams
 const ResetPasswordContent = dynamic(() => import('./ResetPasswordContent'), {
