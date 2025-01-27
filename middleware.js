@@ -14,7 +14,8 @@ const authRoutes = [
 ];
 
 export async function middleware(request) {
-    const path = request.nextUrl.pathname;
+    const url = new URL(request.url);
+    const path = url.pathname;
     const token = request.cookies.get('accessToken')?.value;
 
     // Handle protected routes
@@ -25,8 +26,10 @@ export async function middleware(request) {
     }
 
     // Handle auth routes (prevent authenticated users from accessing login/signup)
-    if (authRoutes.includes(path) && token) {
-        return NextResponse.redirect(new URL('/', request.url));
+    if (authRoutes.includes(path)) {
+        if (token) {
+            return NextResponse.redirect(new URL('/', request.url));
+        }
     }
 
     // Handle admin routes

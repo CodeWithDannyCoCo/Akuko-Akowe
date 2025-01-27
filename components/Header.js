@@ -19,8 +19,12 @@ export default function Header() {
     setIsMenuOpen(false)
   }, [pathname])
 
+  const handleClick = (e, path) => {
+    console.log('Link clicked:', path)
+  }
+
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm mb-8">
+    <header className="sticky top-0 z-50 backdrop-blur-sm shadow-sm mb-8 bg-white/80 dark:bg-gray-800/80">
       <nav className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center">
@@ -78,12 +82,14 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
+                  onClick={(e) => handleClick(e, '/login')}
                   className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
+                  onClick={(e) => handleClick(e, '/signup')}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Sign Up
@@ -160,12 +166,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/login"
+                    onClick={(e) => handleClick(e, '/login')}
                     className="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     href="/signup"
+                    onClick={(e) => handleClick(e, '/signup')}
                     className="block px-3 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg transition-colors"
                   >
                     Sign Up

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import LikeBookmarkButtons from './LikeBookmarkButtons'
@@ -8,6 +8,7 @@ import { MessageCircle, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRi
 import { api, getFullAvatarUrl } from '../lib/api'
 import { useAuth } from '../lib/AuthContext'
 import { useRouter, usePathname } from 'next/navigation'
+import OptimizedImage from './OptimizedImage'
 
 export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -22,6 +23,12 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
   const isPostAuthor = user && user.username === post.author.username
 
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && editorRef.current && !editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = editedContent;
+    }
+  }, [isEditing, editedContent]);
 
   const formatText = (command, value = null) => {
     document.execCommand(command, false, value);
@@ -228,7 +235,6 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               contentEditable
               className="w-full min-h-[100px] px-3 py-2 rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:outline-none focus:ring-0 focus:bg-gray-50 dark:focus:bg-gray-600 transition-colors overflow-y-auto prose dark:prose-invert max-w-none"
               onInput={(e) => setEditedContent(e.currentTarget.innerHTML)}
-              dangerouslySetInnerHTML={{ __html: editedContent }}
             />
             <div className="flex justify-end space-x-2">
               <button

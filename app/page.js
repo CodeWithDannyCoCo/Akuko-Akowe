@@ -23,7 +23,11 @@ export default function Home() {
       try {
         setLoading(true)
         const data = await api.getPosts()
-        setPosts(data)
+        // Sort posts by creation date in descending order (newest first)
+        const sortedPosts = data.sort((a, b) =>
+          new Date(b.created_at) - new Date(a.created_at)
+        )
+        setPosts(sortedPosts)
       } catch (err) {
         console.error('Error fetching posts:', err)
         setError(err.message || 'Failed to load posts')
