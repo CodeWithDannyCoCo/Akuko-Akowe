@@ -22,15 +22,30 @@ export default function Home() {
     const fetchPosts = async () => {
       try {
         setLoading(true)
-        const data = await api.getPosts()
+        let data;
+
+        if (isAuthenticated && feedType === 'personalized') {
+          try {
+            data = await api.getPersonalizedPosts()
+          } catch (err) {
+            console.error('Error fetching personalized feed:', err)
+            // Fallback to general feed if personalized feed fails
+            data = await api.getPosts()
+            setFeedType('general')
+          }
+        } else {
+          data = await api.getPosts()
+        }
+
         // Sort posts by creation date in descending order (newest first)
         const sortedPosts = data.sort((a, b) =>
           new Date(b.created_at) - new Date(a.created_at)
         )
         setPosts(sortedPosts)
+        setError('')
       } catch (err) {
         console.error('Error fetching posts:', err)
-        setError(err.message || 'Failed to load posts')
+        setError('Failed to load posts. Please try again later.')
       } finally {
         setLoading(false)
       }
@@ -61,7 +76,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-              {feedType === 'personalized' ? 'Your Feed' : 'Latest Blog Posts'}
+              {isAuthenticated && feedType === 'personalized' ? 'Your Feed' : 'Latest Blog Posts'}
             </h1>
             {isAuthenticated && (
               <div className="flex w-full sm:w-auto space-x-2 sm:space-x-4">
@@ -99,9 +114,9 @@ export default function Home() {
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              {feedType === 'personalized'
+              {isAuthenticated && feedType === 'personalized'
                 ? 'No posts in your personalized feed yet. Try following some users!'
-                : 'No posts yet'}
+                : 'No posts yet. Be the first to share your story!'}
             </div>
           ) : (
             <div className="grid gap-8">

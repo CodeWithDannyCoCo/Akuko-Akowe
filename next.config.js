@@ -31,8 +31,18 @@ const nextConfig = {
         NEXT_PUBLIC_BASE_URL: baseUrl,
     },
     images: {
-        domains: [hostname, 'localhost', process.env.VERCEL_URL].filter(Boolean),
+        domains: [
+            hostname,
+            'localhost',
+            process.env.VERCEL_URL,
+            'chronicle-server-f2n9.onrender.com'
+        ].filter(Boolean),
         remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'chronicle-server-f2n9.onrender.com',
+                pathname: '/media/**',
+            },
             {
                 protocol: baseUrl.startsWith('https') ? 'https' : 'http',
                 hostname: hostname,
