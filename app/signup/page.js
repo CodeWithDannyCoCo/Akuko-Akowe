@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import { useAuth } from '../../lib/AuthContext'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 export default function Signup() {
   const [username, setUsername] = useState('')
@@ -12,6 +13,7 @@ export default function Signup() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { signup } = useAuth()
 
@@ -115,23 +117,36 @@ export default function Signup() {
                 >
                   Password
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
-                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                    focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent
-                    disabled:opacity-60 disabled:cursor-not-allowed
-                    transition-colors duration-200"
-                  required
-                  disabled={loading}
-                  minLength={8}
-                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$"
-                  title="Password must be at least 8 characters long and contain at least one letter and one number"
-                  placeholder="Create a password"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                      focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent
+                      disabled:opacity-60 disabled:cursor-not-allowed
+                      transition-colors duration-200"
+                    required
+                    disabled={loading}
+                    minLength={8}
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$"
+                    title="Password must be at least 8 characters long and contain at least one letter and one number"
+                    placeholder="Create a password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   Must be at least 8 characters with 1 letter and 1 number
                 </p>
