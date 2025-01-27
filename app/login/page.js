@@ -7,7 +7,7 @@ import { useAuth } from '../../lib/AuthContext'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 export default function Login() {
-  const [username, setUsername] = useState('')
+  const [usernameOrEmail, setUsernameOrEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,8 +20,10 @@ export default function Login() {
     setLoading(true)
 
     try {
+      // Determine if input is email or username
+      const isEmail = usernameOrEmail.includes('@')
       await login({
-        username,
+        [isEmail ? 'email' : 'username']: usernameOrEmail,
         password,
       })
       // No need to handle redirection here, AuthContext will do it
@@ -55,16 +57,16 @@ export default function Login() {
             <div className="space-y-6">
               <div>
                 <label
-                  htmlFor="username"
+                  htmlFor="usernameOrEmail"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Username
+                  Username or Email
                 </label>
                 <input
                   type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="usernameOrEmail"
+                  value={usernameOrEmail}
+                  onChange={(e) => setUsernameOrEmail(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 
                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                     focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent
@@ -72,7 +74,7 @@ export default function Login() {
                     transition-colors duration-200"
                   required
                   disabled={loading}
-                  placeholder="Enter your username"
+                  placeholder="Enter your username or email"
                 />
               </div>
 
