@@ -1,7 +1,7 @@
 import './globals.css'
 import ClientLayout from './ClientLayout'
-import HealthCheck from '../components/HealthCheck'
-import { NotificationProvider } from '../lib/NotificationContext'
+import HealthCheck from '@/components/HealthCheck'
+import { NotificationProvider } from '@/lib/NotificationContext'
 
 export const metadata = {
   title: 'Chronicle',
