@@ -1,6 +1,5 @@
 import './globals.css'
 import ClientLayout from './ClientLayout'
-import HealthCheck from '@/components/HealthCheck'
 
 export const metadata = {
   title: 'Chronicle',
@@ -41,9 +40,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <ClientLayout>{children}</ClientLayout>
-        <div className="fixed bottom-4 right-4 z-50">
-          <HealthCheck />
-        </div>
       </body>
     </html>
   )
