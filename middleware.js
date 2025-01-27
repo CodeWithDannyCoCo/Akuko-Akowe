@@ -17,22 +17,10 @@ export async function middleware(request) {
     const path = request.nextUrl.pathname;
     const token = request.cookies.get('accessToken')?.value;
 
-    // Special case for profile pages - allow viewing other profiles
-    if (path.startsWith('/profile/')) {
-        // Only redirect to login if trying to access /profile without a username
-        if (path === '/profile' && !token) {
-            return NextResponse.redirect(new URL('/login', request.url));
-        }
-        // Otherwise, allow access to profile pages
-        return NextResponse.next();
-    }
-
     // Handle protected routes
     if (protectedRoutes.some(route => path.startsWith(route))) {
         if (!token) {
-            const loginUrl = new URL('/login', request.url);
-            loginUrl.searchParams.set('redirect', path);
-            return NextResponse.redirect(loginUrl);
+            return NextResponse.redirect(new URL('/login', request.url));
         }
     }
 
@@ -51,9 +39,10 @@ export async function middleware(request) {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL;
             const response = await fetch(`${apiUrl}/users/me/`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Cookie': `accessToken=${token}`,
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
             });
 
             if (!response.ok) throw new Error('Failed to verify staff status');
