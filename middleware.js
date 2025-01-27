@@ -42,7 +42,7 @@ export async function middleware(request) {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL;
             const response = await fetch(`${apiUrl}/users/me/`, {
                 headers: {
-                    'Cookie': `accessToken=${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
