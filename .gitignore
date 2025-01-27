@@ -104,9 +104,9 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-/backend/
-/backend/media/
-/backend/staticfiles/
+backend
+backend/media
+backend/staticfiles
 .env.local
 .env.development
 .env.production

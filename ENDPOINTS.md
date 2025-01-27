@@ -44,5 +44,5 @@
 ## Feed
 - GET /api/feed
 
-Note: These endpoints represent a RESTful API structure for the blog platform. In a real-world application, you would implement these endpoints on your backend server (e.g., using Express.js with Node.js) and connect them to your database.
+Note: These endpoints represent a RESTful API structure for the blog platform. In a real-world application, you would implement these endpoints on your backend server (e.g., using Django) and connect them to your database.
 
