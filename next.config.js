@@ -6,23 +6,35 @@ const getHostname = (url) => {
         return new URL(url).hostname;
     } catch (error) {
         console.error(`Invalid URL provided in environment: ${url}`);
-        throw new Error('Invalid URL configuration');
+        return 'localhost';
     }
 };
 
-// Ensure environment variables are set
-if (!process.env.NEXT_PUBLIC_BASE_URL) {
-    throw new Error('NEXT_PUBLIC_BASE_URL environment variable is not set');
-}
+// Get base URL with fallback for production
+const getBaseUrl = () => {
+    if (process.env.NEXT_PUBLIC_BASE_URL) {
+        return process.env.NEXT_PUBLIC_BASE_URL;
+    }
 
-const hostname = getHostname(process.env.NEXT_PUBLIC_BASE_URL);
+    if (process.env.VERCEL_URL) {
+        return `https://${process.env.VERCEL_URL}`;
+    }
+
+    return 'http://localhost:8000';
+};
+
+const baseUrl = getBaseUrl();
+const hostname = getHostname(baseUrl);
 
 const nextConfig = {
+    env: {
+        NEXT_PUBLIC_BASE_URL: baseUrl,
+    },
     images: {
-        domains: [hostname],
+        domains: [hostname, 'localhost', process.env.VERCEL_URL].filter(Boolean),
         remotePatterns: [
             {
-                protocol: 'https',
+                protocol: baseUrl.startsWith('https') ? 'https' : 'http',
                 hostname: hostname,
                 pathname: '/media/**',
             }
@@ -32,7 +44,7 @@ const nextConfig = {
         return [
             {
                 source: '/media/:path*',
-                destination: `${process.env.NEXT_PUBLIC_BASE_URL}/media/:path*`,
+                destination: `${baseUrl}/media/:path*`,
             }
         ]
     }
