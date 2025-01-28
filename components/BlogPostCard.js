@@ -1,26 +1,36 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import LikeBookmarkButtons from './LikeBookmarkButtons'
-import { MessageCircle, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react'
-import { api, getFullAvatarUrl } from '../lib/api'
-import { useAuth } from '../lib/AuthContext'
-import { useRouter, usePathname } from 'next/navigation'
-import OptimizedImage from './OptimizedImage'
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import LikeBookmarkButtons from "./LikeBookmarkButtons";
+import {
+  MessageCircle,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+} from "lucide-react";
+import { api, getFullAvatarUrl } from "../lib/api";
+import { useAuth } from "../lib/AuthContext";
+import { useRouter, usePathname } from "next/navigation";
+import OptimizedImage from "./OptimizedImage";
 
 export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(post.title)
-  const [editedContent, setEditedContent] = useState(post.content)
-  const [error, setError] = useState('')
-  const { user } = useAuth()
-  const router = useRouter()
-  const pathname = usePathname()
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(post?.title || "");
+  const [editedContent, setEditedContent] = useState(post?.content || "");
+  const [error, setError] = useState("");
+  const { user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const isProfilePage = pathname.startsWith('/profile')
-  const isPostAuthor = user && user.username === post.author.username
+  const isProfilePage = pathname.startsWith("/profile");
+  const isPostAuthor =
+    user && post?.author && user.username === post.author.username;
 
   const editorRef = useRef(null);
 
@@ -36,41 +46,53 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
   };
 
   const handleEdit = () => {
-    setIsEditing(true)
-    setEditedTitle(post.title)
-    setEditedContent(post.content)
-  }
+    setIsEditing(true);
+    setEditedTitle(post?.title || "");
+    setEditedContent(post?.content || "");
+  };
 
   const handleSave = async () => {
     try {
       const updatedPost = await api.updatePost(post.id, {
         title: editedTitle,
         content: editedContent,
-      })
-      setIsEditing(false)
+      });
+      setIsEditing(false);
       if (onPostUpdated) {
-        onPostUpdated(updatedPost)
+        onPostUpdated(updatedPost);
       }
     } catch (err) {
-      setError(err.message || 'Failed to update post')
+      setError(err.message || "Failed to update post");
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
+    if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        await api.deletePost(post.id)
+        await api.deletePost(post.id);
         if (onPostDeleted) {
-          onPostDeleted(post.id)
+          onPostDeleted(post.id);
         }
       } catch (err) {
-        setError(err.message || 'Failed to delete post')
+        setError(err.message || "Failed to delete post");
       }
     }
-  }
+  };
 
   const renderAuthorAvatar = () => {
-    const avatarUrl = post.author?.avatar ? getFullAvatarUrl(post.author.avatar) : null;
+    if (!post?.author) {
+      return (
+        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            ?
+          </span>
+        </div>
+      );
+    }
+
+    const avatarUrl = post.author.avatar
+      ? getFullAvatarUrl(post.author.avatar)
+      : null;
 
     if (avatarUrl) {
       return (
@@ -101,35 +123,42 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
 
   // Function to truncate content
   const truncateContent = (content) => {
+    if (!content) return "";
     // Create a temporary div to handle HTML content
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = content
-    const text = tempDiv.textContent || tempDiv.innerText
-    const words = text.split(' ')
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = content;
+    const text = tempDiv.textContent || tempDiv.innerText;
+    const words = text.split(" ");
     if (words.length > 50) {
-      return words.slice(0, 50).join(' ') + '...'
+      return words.slice(0, 50).join(" ") + "...";
     }
-    return content
-  }
+    return content;
+  };
 
   // Function to render content with formatting
   const renderFormattedContent = (content) => {
+    if (!content) return null;
+
     if (content.length > 300) {
       return (
         <div
           className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 prose dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{
-            __html: truncateContent(content)
+            __html: truncateContent(content),
           }}
         />
-      )
+      );
     }
     return (
       <div
         className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 prose dark:prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: content }}
       />
-    )
+    );
+  };
+
+  if (!post) {
+    return null;
   }
 
   return (
@@ -139,19 +168,28 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
           {renderAuthorAvatar()}
           <div className="ml-3 min-w-0">
             <div className="flex items-center gap-2">
-              <Link
-                href={`/profile/${post.author.username}`}
-                className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+              {post.author ? (
+                <Link
+                  href={`/profile/${post.author.username}`}
+                  className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+                >
+                  {post.author.username}
+                </Link>
+              ) : (
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  Unknown Author
+                </span>
+              )}
+              <time
+                dateTime={post.created_at}
+                className="text-xs sm:text-sm text-gray-500 dark:text-gray-400"
               >
-                {post.author.username}
-              </Link>
-              <time dateTime={post.created_at} className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 {new Date(post.created_at).toLocaleDateString(undefined, {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}
               </time>
             </div>
@@ -175,7 +213,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
             <div className="flex flex-wrap gap-2 mb-2">
               <button
                 type="button"
-                onClick={() => formatText('bold')}
+                onClick={() => formatText("bold")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Bold"
               >
@@ -183,7 +221,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('italic')}
+                onClick={() => formatText("italic")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Italic"
               >
@@ -191,7 +229,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('underline')}
+                onClick={() => formatText("underline")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Underline"
               >
@@ -199,7 +237,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('justifyLeft')}
+                onClick={() => formatText("justifyLeft")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Align Left"
               >
@@ -207,7 +245,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('justifyCenter')}
+                onClick={() => formatText("justifyCenter")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Align Center"
               >
@@ -215,7 +253,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('justifyRight')}
+                onClick={() => formatText("justifyRight")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Align Right"
               >
@@ -223,7 +261,7 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
               </button>
               <button
                 type="button"
-                onClick={() => formatText('justifyFull')}
+                onClick={() => formatText("justifyFull")}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 title="Justify"
               >
@@ -272,7 +310,9 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
                     title="View comments"
                   >
                     <MessageCircle size={18} />
-                    <span className="text-sm font-medium">{post.comments_count || 0}</span>
+                    <span className="text-sm font-medium">
+                      {post.comments_count || 0}
+                    </span>
                   </Link>
                 </div>
                 {isProfilePage ? (
@@ -312,6 +352,5 @@ export default function BlogPostCard({ post, onPostUpdated, onPostDeleted }) {
         )}
       </div>
     </article>
-  )
+  );
 }
-

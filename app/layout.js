@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
-        <link rel="preload" href="/default-avatar.png" as="image" />
+        {/* DNS prefetch and preconnect for API calls */}
         <link rel="dns-prefetch" href="/api" />
         <link rel="preconnect" href="/api" />
         <meta
