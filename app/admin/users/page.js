@@ -133,7 +133,7 @@ export default function UsersManagement() {
                                                         ) : (
                                                             <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                                                                 <span className="text-gray-500 dark:text-gray-400 text-lg font-medium">
-                                                                    {user.username[0].toUpperCase()}
+                                                                    {user.username && user.username.length > 0 ? user.username[0].toUpperCase() : '?'}
                                                                 </span>
                                                             </div>
                                                         )}
@@ -160,8 +160,8 @@ export default function UsersManagement() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'staff'
-                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400'
-                                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-400'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400'
+                                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-400'
                                                     }`}>
                                                     {user.role}
                                                 </span>
