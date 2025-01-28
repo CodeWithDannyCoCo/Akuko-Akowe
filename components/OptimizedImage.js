@@ -1,35 +1,64 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { getImageUrl } from '@/lib/utils'
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { getImageUrl } from "@/lib/utils";
 
-export default function OptimizedImage({ src, alt, ...props }) {
-    // Use the utility function to transform the URL
-    const [imgSrc, setImgSrc] = useState(() => {
-        // If src is already a full URL (from getFullAvatarUrl), use it directly
-        try {
-            new URL(src);
-            return src;
-        } catch (_) {
-            // If not a valid URL, use our utility function
-            return getImageUrl(src);
-        }
-    });
+export default function OptimizedImage({
+  src,
+  alt,
+  priority = false,
+  quality = 75,
+  loading = "lazy",
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  ...props
+}) {
+  const [imgSrc, setImgSrc] = useState(() => {
+    try {
+      new URL(src);
+      return src;
+    } catch (_) {
+      return getImageUrl(src);
+    }
+  });
 
-    return (
-        <Image
-            {...props}
-            src={imgSrc}
-            alt={alt}
-            onError={() => {
-                // If the image fails to load, try getting the URL again
-                // This is now just a safety check and shouldn't be needed often
-                const newSrc = getImageUrl(src);
-                if (newSrc !== imgSrc) {
-                    setImgSrc(newSrc);
-                }
-            }}
-        />
-    );
-} 
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Preload critical images
+  useEffect(() => {
+    if (priority && typeof window !== "undefined") {
+      const img = new window.Image();
+      img.src = imgSrc;
+    }
+  }, [imgSrc, priority]);
+
+  return (
+    <div
+      className={`relative ${
+        isLoading ? "animate-pulse bg-gray-200 dark:bg-gray-700" : ""
+      }`}
+    >
+      <Image
+        {...props}
+        src={imgSrc}
+        alt={alt}
+        quality={quality}
+        loading={priority ? "eager" : loading}
+        sizes={sizes}
+        onLoadingComplete={() => setIsLoading(false)}
+        onError={() => {
+          const newSrc = getImageUrl(src);
+          if (newSrc !== imgSrc) {
+            setImgSrc(newSrc);
+          }
+          setIsLoading(false);
+        }}
+        className={`${props.className || ""} ${
+          isLoading
+            ? "opacity-0"
+            : "opacity-100 transition-opacity duration-200"
+        }`}
+      />
+    </div>
+  );
+}
