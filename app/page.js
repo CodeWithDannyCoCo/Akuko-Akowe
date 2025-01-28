@@ -76,11 +76,26 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-              {isAuthenticated && feedType === "personalized"
-                ? "Your Feed"
-                : "Latest Blog Posts"}
-            </h1>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                {isAuthenticated && user ? (
+                  feedType === "personalized" ? (
+                    <>Your Personal Feed, {user.username}</>
+                  ) : (
+                    <>Explore Posts, {user.username}</>
+                  )
+                ) : (
+                  "Latest Blog Posts"
+                )}
+              </h1>
+              {isAuthenticated && user && (
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  {feedType === "personalized"
+                    ? "Here are the latest posts from people you follow"
+                    : "Discover stories from all our writers"}
+                </p>
+              )}
+            </div>
             {isAuthenticated && (
               <div className="flex w-full sm:w-auto space-x-2 sm:space-x-4">
                 <button
