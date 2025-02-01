@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+:root {
+  --scrollbar-thumb-light: rgb(203 213 225);
+  --scrollbar-thumb-dark: rgb(51 65 85);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-light) transparent;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-light);
+  border-radius: 20px;
+  border: transparent;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  * {
+    scrollbar-color: var(--scrollbar-thumb-dark) transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-dark);
+  }
+}
+
+/* For elements that need a hidden scrollbar */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  }
+}
